@@ -1,0 +1,21 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <h1>Logout Successful</h1>
+  <p>You have been successfully logged out.</p>
+  <p>Redirecting to login page...</p>
+
+  <button id="login-btn">Go to Login</button>
+
+  <script>
+    const loginBtn = document.getElementById("login-btn");
+    if (loginBtn) {
+      loginBtn.addEventListener("click", () => {
+        window.location.href = "/login";
+      });
+    }
+
+  </script>
+</Layout>

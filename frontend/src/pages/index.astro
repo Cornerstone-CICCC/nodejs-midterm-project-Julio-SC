@@ -1,11 +1,87 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout>
-	<Welcome />
+<Layout showNavbar={false}>
+  <div class="index-container">
+    <div class="index-header">
+      <h1>Welcome to <span class="highlight">Recipe Book</span></h1>
+      <p>Explore amazing recipes and discover new flavors every day!</p>
+    </div>
+
+    <div class="index-links">
+      <a href="/login" class="btn">Login</a>
+      <a href="/register" class="btn">Sign Up</a>
+    </div>
+  </div>
+
+  <style>
+    body {
+      background: linear-gradient(
+        135deg,
+        #ffecd2 20%,
+        #fcb69f 40%,
+        #f8f9fa 60%,
+        #a1c4fd 100%
+      );
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: "Arial", sans-serif;
+    }
+
+    .index-container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+      border: 4px solid #ffb703;
+      position: relative;
+      z-index: 1;
+    }
+
+    .index-header h1 {
+      color: #ffb703;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .highlight {
+      color: #fb8500;
+    }
+
+    .index-header p {
+      color: #555;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .index-links {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .btn {
+      background-color: #ffb703;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      width: 100px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      background-color: #fb8500;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+  </style>
 </Layout>

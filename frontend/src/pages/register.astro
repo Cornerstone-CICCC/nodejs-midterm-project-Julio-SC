@@ -1,0 +1,144 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout showNavbar={false}>
+  <header class="header">
+    <div class="header-content">
+      <h2 class="logo">🍳</h2>
+      <h2 class="header-title">Recipe Book</h2>
+    </div>
+  </header>
+
+  <div class="auth-container">
+    <h1>Create an Account</h1>
+
+    <form id="register-form">
+      <input type="text" name="firstname" placeholder="First Name" required />
+      <input type="text" name="lastname" placeholder="Last Name" required />
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit" class="btn-primary">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="/login" class="link">Login here</a></p>
+  </div>
+
+  <script>
+    const form = document.getElementById(
+      "register-form",
+    ) as HTMLFormElement | null;
+
+    if (form instanceof HTMLFormElement) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        const res = await fetch(`http://localhost:3500/users/signup`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          alert("User registered successfully!");
+          window.location.href = "/login";
+        } else {
+          alert("Registration failed. Please try again.");
+        }
+      });
+    }
+  </script>
+
+  <style>
+    header {
+      background-color: #ffb703;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-height: 80px; 
+      overflow: hidden; 
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 4rem; 
+      height: auto;
+    }
+
+    .header-title {
+      color: #fff;
+      font-size: 2.5rem;
+      margin: 0;
+      font-weight: bold;
+    }
+
+    .auth-container {
+      max-width: 400px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      margin: 60px auto;
+      text-align: center;
+      border-top: 5px solid #ffb703; 
+    }
+
+    .auth-container h1 {
+      color: #fb8500;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .btn-primary {
+      background-color: #ffb703;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #fb8500;
+    }
+
+    .link {
+      color: #ffb703;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+
+    p {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</Layout>

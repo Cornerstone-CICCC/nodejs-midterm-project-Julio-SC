@@ -1,0 +1,133 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout showNavbar={false}>
+  <header class="header">
+    <div class="header-content">
+      <h2 class="logo">🍳</h2>
+      <h2 class="header-title">Recipe Book</h2>
+    </div>
+  </header>
+  <div class="auth-container">
+    <h1>Login</h1>
+
+    <form id="login-form">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit" class="btn-primary">Login</button>
+    </form>
+
+    <p>Don't have an account? <a href="/register" class="link">Sign up here</a></p>
+  </div>
+
+  <script>
+    const form = document.getElementById("login-form") as HTMLFormElement | null;
+
+    if (form instanceof HTMLFormElement) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        const res = await fetch(`http://localhost:3500/users/login`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          alert("Login successful!");
+          window.location.href = "/homerecipes";
+        } else {
+          alert("Login failed. Please try again.");
+        }
+      });
+    }
+  </script>
+
+  <style>
+
+header {
+    background-color: #FFB703;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 80px; /* ✅ Altura máxima controlada */
+    overflow: hidden;  /* ✅ Previene que el contenido crezca demasiado */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 4rem;  /* ✅ Tamaño proporcional para evitar que empuje el header */
+    height: auto;
+}
+
+.header-title {
+    color: #fff;
+    font-size: 2.5rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+
+    .auth-container {
+      max-width: 350px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      margin: 60px auto;
+      text-align: center;
+    }
+
+    .auth-container h1 {
+      color: #FFB703;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .btn-primary {
+      background-color: #FFB703;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #fb8500;
+    }
+
+    .link {
+      color: #FFB703;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</Layout>

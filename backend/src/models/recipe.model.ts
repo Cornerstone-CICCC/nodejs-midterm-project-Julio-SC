@@ -37,13 +37,18 @@ class RecipeModel {
         );
     }
 
-    updateById(id: string, updates: Partial<Recipe>): Recipe | false {
+    updateById(id: string, updates: Partial<Recipe>) {
         const foundIndex = this.recipes.findIndex(recipe => recipe.id === id);
         if (foundIndex === -1) return false;
 
-        const updatedRecipe: Recipe = {
+        const updatedRecipe = {
             ...this.recipes[foundIndex],
-            ...updates
+            title:updates.title ?? this.recipes[foundIndex].title, 
+            description:updates.description ?? this.recipes[foundIndex].description, 
+            ingredients:updates.ingredients ?? this.recipes[foundIndex].ingredients,
+             instructions:updates.instructions ?? this.recipes[foundIndex].instructions,
+              category:updates.category ?? this.recipes[foundIndex].category,
+               image:updates.image ?? this.recipes[foundIndex].image
         };
 
         this.recipes[foundIndex] = updatedRecipe;

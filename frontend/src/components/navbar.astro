@@ -1,0 +1,81 @@
+<nav class="navbar">
+  <a href="/homerecipes" class="nav-link">Home Recipes</a>
+  <a href="/profile" class="nav-link">Profile</a>
+  <button id="logout-btn" class="logout-btn">Logout</button>
+</nav>
+
+<script>
+// ✅ Check-Auth para proteger rutas
+async function checkAuthStatus() {
+  try {
+    const res = await fetch(`http://localhost:3500/users/check-auth`, {
+      method: "GET",
+      credentials: "include"
+    });
+
+    if (!res.ok) {
+      window.location.href = "/login";  // Redirige al login si no está autenticado
+    }
+  } catch (error) {
+    console.error("Error checking auth status:", error);
+    alert("An error occurred. Please try again.");
+  }
+}
+
+// ✅ Logout Mejorado (Con confirmación)
+const logoutBtn = document.getElementById("logout-btn");
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    const confirmLogout = confirm("Are you sure you want to logout?");
+    if (!confirmLogout) return;
+
+    const res = await fetch(`http://localhost:3500/users/logout`, {
+    method: "GET",  // ✅ CORRECTO
+    credentials: "include"
+});
+;
+
+    if (res.ok) {
+      alert("Logged out successfully!");
+      window.location.href = "/";
+    } else {
+      alert("Logout failed. Please try again.");
+    }
+  });
+}
+
+// ✅ Ejecutar Check-Auth al cargar la página
+document.addEventListener("DOMContentLoaded", checkAuthStatus);
+</script>
+
+<style>
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #FFB703;
+  padding: 12px 20px;
+  border-radius: 30px; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+}
+
+.nav-link,
+.logout-btn {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: background 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-link:hover,
+.logout-btn:hover {
+  background-color: #fb8500;
+}
+</style>

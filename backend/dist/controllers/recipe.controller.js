@@ -41,6 +41,7 @@ const getRecipeById = (req, res) => {
 };
 const addRecipe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, description, ingredients, instructions, category, image } = req.body;
+    console.log("🔎 Datos recibidos en el backend:", req.body);
     if (!title || !description || !ingredients || !instructions || !category) {
         res.status(400).json({ error: 'All fields are required!' });
         return;

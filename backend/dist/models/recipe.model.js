@@ -37,10 +37,11 @@ class RecipeModel {
             recipe.ingredients.some(ingredient => ingredient.toLowerCase().includes(lowerCaseKeyword)));
     }
     updateById(id, updates) {
+        var _a, _b, _c, _d, _e, _f;
         const foundIndex = this.recipes.findIndex(recipe => recipe.id === id);
         if (foundIndex === -1)
             return false;
-        const updatedRecipe = Object.assign(Object.assign({}, this.recipes[foundIndex]), updates);
+        const updatedRecipe = Object.assign(Object.assign({}, this.recipes[foundIndex]), { title: (_a = updates.title) !== null && _a !== void 0 ? _a : this.recipes[foundIndex].title, description: (_b = updates.description) !== null && _b !== void 0 ? _b : this.recipes[foundIndex].description, ingredients: (_c = updates.ingredients) !== null && _c !== void 0 ? _c : this.recipes[foundIndex].ingredients, instructions: (_d = updates.instructions) !== null && _d !== void 0 ? _d : this.recipes[foundIndex].instructions, category: (_e = updates.category) !== null && _e !== void 0 ? _e : this.recipes[foundIndex].category, image: (_f = updates.image) !== null && _f !== void 0 ? _f : this.recipes[foundIndex].image });
         this.recipes[foundIndex] = updatedRecipe;
         return updatedRecipe;
     }

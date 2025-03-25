@@ -1,0 +1,379 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+export const prerender = false;
+
+const { id } = Astro.params;
+
+let recipe = null;
+try {
+    const res = await fetch(`http://localhost:3500/recipes/${id}`);
+    if (res.ok) {
+        recipe = await res.json();
+    } else {
+        console.error(`Error fetching recipe: ${res.status}`);
+    }
+} catch (error) {
+    console.error("Error fetching recipe:", error);
+}
+
+console.log("🚨 Datos recibidos:", recipe);
+
+const formatIngredientName = (name: string) => {
+    return name.replace(/^strIngredient/, "").trim();
+};
+---
+
+<Layout>
+    <div id="recipe-details" class="recipe-card">
+        <h1 id="recipe-title">{recipe?.title || "Recipe Not Found"}</h1>
+        <img
+            id="recipe-image"
+            class="recipe-img"
+            src={`${recipe?.image || ""}`}
+            alt="{recipe?.title || 'No Image'}"
+            width="300"
+        />
+
+        <h3>INGREDIENTS:</h3>
+        <ul id="ingredients-list">
+            {
+                recipe?.ingredients && recipe.ingredients.length > 0 ? (
+                    recipe.ingredients.map((ingredient: string) => (
+                        <li>{formatIngredientName(ingredient)}</li>
+                    ))
+                ) : (
+                    <li>No ingredients available.</li>
+                )
+            }
+        </ul>
+
+        <h3>INSTRUCTIONS:</h3>
+        <ul id="instructions-list">
+            {
+                recipe?.instructions ? (
+                    recipe.instructions
+                        .split(". ")
+                        .filter((instruction: string) => instruction.trim())
+                        .map((instruction: string) => (
+                            <li>{instruction.trim()}</li>
+                        ))
+                ) : (
+                    <li>No instructions available.</li>
+                )
+            }
+        </ul>
+        <div class="action-buttons">
+            <button class="edit-btn" onclick="editRecipe()">Edit Recipe</button>
+            <button class="delete-btn" onclick="deleteRecipe()"
+                >Delete Recipe</button
+            >
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Edit Recipe</h2>
+            <form id="edit-recipe-form">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" />
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea>
+
+                <label for="ingredients">Ingredients (comma separated):</label>
+                <input type="text" id="ingredients" name="ingredients" />
+
+                <label for="instructions">Instructions:</label>
+                <textarea id="instructions" name="instructions"></textarea>
+
+                <label for="category">Category:</label>
+                <input type="text" id="category" name="category" />
+
+                <label for="image">Image URL:</label>
+                <input type="url" id="image" name="image" />
+
+                <button type="submit">Update Recipe</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById(
+                "modal",
+            ) as HTMLElement | null;
+            const closeModalBtn = document.querySelector(
+                ".close-btn",
+            ) as HTMLSpanElement | null;
+            const editButton = document.querySelector(
+                ".edit-btn",
+            ) as HTMLButtonElement | null;
+            const editRecipeForm = document.getElementById(
+                "edit-recipe-form",
+            ) as HTMLFormElement | null;
+
+     
+            editButton?.addEventListener("click", () => {
+                modal!.style.display = "flex";
+            });
+
+            closeModalBtn?.addEventListener("click", () => {
+                modal!.style.display = "none";
+            });
+
+
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    modal!.style.display = "none";
+                }
+            });
+
+            editRecipeForm?.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(editRecipeForm);
+                const formObject = Object.fromEntries(formData.entries());
+
+                try {
+                    const response = await fetch(
+                        `http://localhost:3500/recipes/${window.location.pathname.split("/").pop()}`,
+                        {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(formObject),
+                        },
+                    );
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert("Recipe updated successfully!");
+                        modal!.style.display = "none"; 
+                        window.location.reload(); 
+                    } else {
+                        alert(`Error: ${data.error}`);
+                    }
+                } catch (error) {
+                    console.error("Error updating recipe:", error);
+                    alert("Failed to update recipe. Please try again.");
+                }
+            });
+        });
+
+        //Hi Teacher, hope you're well.
+        //Trust Me I tried to make the edit recipe works, but by the moment I couldn't reach the solution. 
+        //I'll be working by myself on this proyect to improve it. Tnanks :)
+
+        const buttondelete = document.querySelector(".delete-btn");
+        buttondelete?.addEventListener("click", () => {
+            deleteRecipe();
+        });
+
+        async function deleteRecipe() {
+            if (!confirm("Are you sure you want to delete this recipe?"))
+                return;
+
+            const res = await fetch(
+                `http://localhost:3500/recipes/${window.location.pathname.split("/").pop()}`,
+                {
+                    method: "DELETE",
+                },
+            );
+
+            if (res.ok) {
+                alert("Recipe deleted successfully!");
+                window.location.href = "/homerecipes";
+            } else {
+                alert("Failed to delete recipe. Please try again.");
+            }
+        }
+
+        const editRecipeForm = document.getElementById(
+            "edit-recipe-form",
+        ) as HTMLFormElement;
+
+        editRecipeForm?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formdata = new FormData(e.target as HTMLFormElement);
+            const formobject = Object.fromEntries(formdata.entries());
+
+            try {
+                const response = await fetch(
+                    `http://localhost:3500/recipes/${window.location.pathname.split("/").pop()}`,
+                    {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(formobject),
+                    },
+                );
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Recipe edited!");
+                    window.location.href = "/homerecipes";
+                    console.log(formdata); 
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error("Error adding recipe:", error);
+                alert("Failed to add recipe. Please try again.");
+            }
+        });
+    </script>
+</Layout>
+
+<style>
+    body {
+        background-color: #fefae0;
+        background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png"); /* 🔹 Textura ligera */
+        min-height: 100vh;
+    }
+
+    #recipe-details {
+        background-color: #ffffff;
+        border: 8px solid #ffb703;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        max-width: 850px; 
+        padding: 30px;
+        margin: 40px auto;
+        text-align: center;
+    }
+
+    #recipe-image {
+        width: 300px; 
+        height: 300px; 
+        object-fit: cover; 
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+    }
+
+    #ingredients-list,
+    #instructions-list {
+        background-color: #fff3cd;
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 15px;
+        text-align: left;
+        list-style: disc; 
+        padding-left: 25px; 
+    }
+
+    #ingredients-list li,
+    #instructions-list li {
+        margin-bottom: 4px; 
+        line-height: 1.5;
+    }
+
+    .recipe-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 20px;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px; 
+        margin-bottom: 20px; 
+    }
+
+    .edit-btn,
+    .delete-btn {
+        background-color: #fb8500;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+
+    .delete-btn {
+        background-color: #d62828;
+    }
+
+    .edit-btn:hover {
+        background-color: #ffb703;
+    }
+
+    .delete-btn:hover {
+        background-color: #ff6b6b;
+    }
+
+    .modal {
+        display: none; /* Ocultar por defecto */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(
+            0,
+            0,
+            0,
+            0.5
+        ); 
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #d62828;
+    }
+
+    .modal-content h2 {
+        color: #ffb703;
+        text-align: center;
+    }
+
+    .modal-content input,
+    .modal-content textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 2px solid #ffb703;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    .modal-content button {
+        background-color: #fb8500;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        cursor: pointer;
+        width: 100%;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+
+    .modal-content button:hover {
+        background-color: #ffb703;
+    }
+</style>
